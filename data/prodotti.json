@@ -1,0 +1,36 @@
+{
+  "prodotti": [
+    {
+      "nome": "Copertura per posti auto",
+      "prezzo": 890,
+      "descrizione": "Copertura in PVC impermeabile su misura per posti auto e parcheggi. Protezione da sole, grandine e agenti atmosferici.",
+      "immagine": "images/Copertura posti auto.jpg",
+      "in_evidenza": true,
+      "disponibile": true
+    },
+    {
+      "nome": "Copertura pompeiana",
+      "prezzo": 650,
+      "descrizione": "Telo di copertura su misura per pergole e pompeiane in legno, ferro o alluminio. Ampia scelta di colori.",
+      "immagine": "images/Copertura pompeiana2.jpg",
+      "in_evidenza": true,
+      "disponibile": true
+    },
+    {
+      "nome": "Chiusura laterale con finestre",
+      "prezzo": 480,
+      "descrizione": "Telone laterale con finestre in PVC cristal trasparente. Ideale per gazebo, pergolati, bar e ristoranti.",
+      "immagine": "images/Laterale con finestre.jpg",
+      "in_evidenza": false,
+      "disponibile": true
+    },
+    {
+      "nome": "Telo per falciatrice",
+      "prezzo": 120,
+      "descrizione": "Protezione in PVC ad alta resistenza per meccanismi di falciatrici e voltafieno. Resistente a usura e agenti esterni.",
+      "immagine": "images/Telo per Falciatrice.jpg",
+      "in_evidenza": false,
+      "disponibile": true
+    }
+  ]
+}

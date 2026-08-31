@@ -1,0 +1,3 @@
+# Cloudflare Pages redirects
+# Rimosso il catch-all per permettere alle Functions di funzionare
+# Le pagine .html sono servite automaticamente anche senza estensione

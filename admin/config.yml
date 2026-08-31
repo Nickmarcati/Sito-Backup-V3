@@ -1,0 +1,33 @@
+backend:
+  name: github
+  repo: Nickmarcati/Sito-Marcati-Teloni-Store
+  branch: main
+  auth_type: pkce
+  app_id: "INSERISCI_CLIENT_ID_GITHUB_APP"
+
+local_backend: true
+
+media_folder: "images"
+public_folder: "images"
+
+collections:
+  - name: "prodotti"
+    label: "Prodotti Store"
+    files:
+      - name: "lista-prodotti"
+        label: "Lista Prodotti"
+        file: "data/prodotti.json"
+        description: "Aggiungi, modifica o rimuovi i prodotti dello store."
+        fields:
+          - name: "prodotti"
+            label: "Prodotti"
+            label_singular: "Prodotto"
+            widget: "list"
+            summary: "{{fields.nome}}"
+            fields:
+              - { name: "nome", label: "Nome prodotto", widget: "string" }
+              - { name: "prezzo", label: "Prezzo (€)", widget: "number", value_type: "float", step: 0.01, min: 0 }
+              - { name: "immagine", label: "Immagine", widget: "image" }
+              - { name: "descrizione", label: "Descrizione", widget: "text", required: false }
+              - { name: "in_evidenza", label: "In evidenza", widget: "boolean", default: false, required: false }
+              - { name: "disponibile", label: "Disponibile", widget: "boolean", default: true, required: false }
