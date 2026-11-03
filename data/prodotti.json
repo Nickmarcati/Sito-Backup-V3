@@ -3,34 +3,47 @@
     {
       "nome": "Copertura per posti auto",
       "prezzo": 890,
+      "spedizione": 70,
       "descrizione": "Copertura in PVC impermeabile su misura per posti auto e parcheggi. Protezione da sole, grandine e agenti atmosferici.",
-      "immagine": "images/Copertura posti auto.jpg",
+      "immagine": "images-store/Copertura posti auto.jpg",
       "in_evidenza": true,
       "disponibile": true
     },
     {
       "nome": "Copertura pompeiana",
       "prezzo": 650,
+      "spedizione": 50,
       "descrizione": "Telo di copertura su misura per pergole e pompeiane in legno, ferro o alluminio. Ampia scelta di colori.",
-      "immagine": "images/Copertura pompeiana2.jpg",
+      "immagine": "images-store/Copertura pompeiana2.jpg",
       "in_evidenza": true,
       "disponibile": true
     },
     {
       "nome": "Chiusura laterale con finestre",
       "prezzo": 480,
+      "spedizione": 40,
       "descrizione": "Telone laterale con finestre in PVC cristal trasparente. Ideale per gazebo, pergolati, bar e ristoranti.",
-      "immagine": "images/Laterale con finestre.jpg",
+      "immagine": "images-store/Laterale con finestre.jpg",
       "in_evidenza": false,
       "disponibile": true
     },
     {
       "nome": "Telo per falciatrice",
       "prezzo": 120,
+      "spedizione": 15,
       "descrizione": "Protezione in PVC ad alta resistenza per meccanismi di falciatrici e voltafieno. Resistente a usura e agenti esterni.",
-      "immagine": "images/Telo per Falciatrice.jpg",
+      "immagine": "images-store/Telo per Falciatrice.jpg",
       "in_evidenza": false,
       "disponibile": true
+    },
+    {
+      "in_evidenza": false,
+      "disponibile": true,
+      "nome": "Telo in tessuto plasticato 5x5 mt",
+      "prezzo": 250,
+      "immagine": "images/campione-bano.jpg",
+      "descrizione": "Telo in tessuto plasticato ignifugo cl.2, 650 g/mq disponibile in varie tonalità colore (vedi pagina colori).\n",
+      "spedizione": 10
     }
   ]
 }

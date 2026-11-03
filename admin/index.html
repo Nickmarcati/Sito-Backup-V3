@@ -4,9 +4,692 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <title>Amministrazione — Marcati Teloni</title>
+  <link rel="icon" type="image/png" href="../images/Marcati Teloni favicon.png">
+  <title>Gestione Store — Marcati Teloni</title>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-dark: #a88a3a;
+      --dark: #0f1115;
+      --surface: #181b21;
+      --elevated: #1e2229;
+      --border: #2a2f38;
+      --gray: #7a8194;
+      --gray-light: #a8aebc;
+      --white: #f0f2f5;
+      --red: #d98a8a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--dark);
+      color: var(--gray-light);
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    img { display: block; max-width: 100%; }
+    button { font-family: inherit; cursor: pointer; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 2rem;
+      background: rgba(15,17,21,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    header .logo img { height: 44px; width: auto; }
+    header h1 {
+      color: var(--white);
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+    }
+    header h1 span { color: var(--gold); }
+    .modo-locale {
+      padding: 0.35rem 0.9rem;
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 100px;
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .header-nav { display: flex; gap: 0.4rem; }
+    .nav-tab {
+      padding: 0.45rem 1.1rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray-light);
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-tab.attiva {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--dark);
+      border-color: transparent;
+    }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+    .errore-server {
+      padding: 1.2rem 1.5rem;
+      background: rgba(217,138,138,0.08);
+      border: 1px solid rgba(217,138,138,0.35);
+      border-radius: 12px;
+      color: var(--red);
+      margin-bottom: 2rem;
+    }
+
+    .add-square {
+      width: 100%;
+      padding: 3rem 1rem;
+      border: 2px dashed var(--gold);
+      border-radius: 16px;
+      background: rgba(201,168,76,0.05);
+      color: var(--gold-dark);
+      font-size: 1.05rem;
+      font-weight: 700;
+      transition: background 0.25s;
+      margin-bottom: 2rem;
+    }
+    .add-square::before {
+      content: '+';
+      display: block;
+      font-size: 3.2rem;
+      line-height: 1;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .add-square:hover { background: rgba(201,168,76,0.12); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201,168,76,0.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .card-media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--dark); position: relative; }
+    .card-media img { width: 100%; height: 100%; object-fit: cover; }
+    .card-media .tag {
+      position: absolute;
+      top: 0.6rem;
+      left: 0.6rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 100px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--dark);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .card-media .tag.esaurito { background: #4a4f5a; color: var(--white); }
+    .card-body { padding: 1rem 1.1rem 1.2rem; }
+    .card-body h3 { color: var(--white); font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .card-body .prezzo { color: var(--gold); font-weight: 700; font-size: 1rem; }
+    .card-body .desc {
+      color: var(--gray);
+      font-size: 0.78rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-top: 0.3rem;
+    }
+
+    .editor { display: none; }
+    .editor.aperto { display: block; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: 10px;
+      border: 1.5px solid transparent;
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: filter 0.2s, background 0.2s;
+    }
+    .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--dark); }
+    .btn-gold:hover { filter: brightness(1.1); }
+    .btn-ghost { background: transparent; color: var(--gray-light); border-color: var(--border); }
+    .btn-ghost:hover { color: var(--white); border-color: var(--gray); }
+    .btn-red { background: transparent; color: var(--red); border-color: rgba(217,138,138,0.4); }
+    .btn-red:hover { background: rgba(217,138,138,0.08); }
+
+    .editor-testa {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.8rem;
+      flex-wrap: wrap;
+    }
+    .editor-testa h2 { color: var(--white); font-size: 1.3rem; }
+
+    .editor-corpo {
+      display: grid;
+      grid-template-columns: minmax(280px, 460px) 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) { .editor-corpo { grid-template-columns: 1fr; } }
+
+    .foto-box .anteprima {
+      aspect-ratio: 4 / 3;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 1rem;
+    }
+    .foto-box .anteprima img { width: 100%; height: 100%; object-fit: cover; }
+    .foto-azioni { display: flex; gap: 0.7rem; margin-top: 0.9rem; flex-wrap: wrap; }
+
+    .campi { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .campi .full { grid-column: 1 / -1; }
+    .campo label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray-light);
+      margin-bottom: 0.35rem;
+    }
+    .campo input, .campo textarea {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: rgba(15,17,21,0.6);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .campo input:focus, .campo textarea:focus { border-color: var(--gold); }
+    .campo textarea { resize: vertical; min-height: 110px; }
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.88rem;
+      color: var(--gray-light);
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle input { accent-color: var(--gold); width: 17px; height: 17px; }
+    .editor-azioni {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1.6rem;
+      flex-wrap: wrap;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.65);
+    }
+    .modal.aperto { display: flex; }
+    .modal-box {
+      width: min(760px, 100%);
+      max-height: 85vh;
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.6rem;
+    }
+    .modal-box h3 { color: var(--white); margin-bottom: 1rem; }
+    .galleria {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.9rem;
+    }
+    .galleria button {
+      border: 2px solid transparent;
+      border-radius: 10px;
+      overflow: hidden;
+      padding: 0;
+      background: var(--elevated);
+      transition: border-color 0.2s;
+    }
+    .galleria button:hover { border-color: var(--gold); }
+    .galleria img { aspect-ratio: 4 / 3; width: 100%; object-fit: cover; }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translate(-50%, 20px);
+      z-index: 600;
+      padding: 0.7rem 1.5rem;
+      border-radius: 100px;
+      background: var(--elevated);
+      border: 1px solid rgba(201,168,76,0.5);
+      color: var(--white);
+      font-size: 0.88rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .toast.visibile { opacity: 1; transform: translate(-50%, 0); }
+    .vuoto { text-align: center; color: var(--gray); padding: 2rem 0; }
+  </style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <header>
+    <div class="logo">
+      <img src="../images/MarcatiTeloni_Bianco-noSfondo.png" alt="Marcati Teloni">
+      <h1>Gestione <span>Store</span></h1>
+    </div>
+    <nav class="header-nav">
+      <button id="nav-prodotti" class="nav-tab attiva" type="button">Prodotti</button>
+      <button id="nav-spedizioni" class="nav-tab" type="button">Spedizioni</button>
+    </nav>
+    <span class="modo-locale">Modalità locale</span>
+  </header>
+
+  <main>
+    <div id="errore-server" class="errore-server" hidden>
+      Server admin non raggiungibile. Avvia i server con un doppio click su <strong>AVVIA-SITO-LOCALE.bat</strong> nella cartella del sito, poi ricarica questa pagina.
+    </div>
+
+    <!-- ELENCO -->
+    <section id="vista-elenco">
+      <button class="add-square" id="btn-nuovo" type="button">Aggiungi un nuovo prodotto</button>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <!-- EDITOR -->
+    <section id="vista-editor" class="editor">
+      <div class="editor-testa">
+        <button class="btn btn-ghost" id="btn-indietro" type="button">&#8592; Elenco prodotti</button>
+        <h2 id="editor-titolo">Nuovo prodotto</h2>
+        <span></span>
+      </div>
+      <div class="editor-corpo">
+        <div class="foto-box">
+          <div class="anteprima" id="foto-anteprima">Nessuna foto selezionata</div>
+          <div class="foto-azioni">
+            <button class="btn btn-ghost" id="btn-carica" type="button">Carica nuova foto</button>
+            <button class="btn btn-ghost" id="btn-galleria" type="button">Scegli dalla galleria</button>
+          </div>
+          <input type="file" id="input-file" accept="image/*" hidden>
+        </div>
+        <div>
+          <div class="campi">
+            <div class="campo full">
+              <label for="f-nome">Nome prodotto *</label>
+              <input id="f-nome" type="text" placeholder="Es. Copertura per posti auto">
+            </div>
+            <div class="campo">
+              <label for="f-prezzo">Prezzo indicativo (&euro;) *</label>
+              <input id="f-prezzo" type="number" min="0" step="0.01" placeholder="890">
+            </div>
+            <div class="campo">
+              <label for="f-spedizione">Spedizione nazionale (&euro;)</label>
+              <input id="f-spedizione" type="number" min="0" step="0.01" placeholder="70">
+            </div>
+            <div class="campo full">
+              <label for="f-descrizione">Descrizione breve</label>
+              <textarea id="f-descrizione" placeholder="Descrivi il prodotto in 1-2 frasi: compare nella card dello store"></textarea>
+            </div>
+            <div class="campo">
+              <label class="toggle"><input id="f-evidenza" type="checkbox"> In evidenza (in cima allo store)</label>
+            </div>
+            <div class="campo">
+              <label class="toggle"><input id="f-disponibile" type="checkbox" checked> Disponibile per l'ordine</label>
+            </div>
+          </div>
+          <div class="editor-azioni">
+            <button class="btn btn-gold" id="btn-salva" type="button">Salva prodotto</button>
+            <button class="btn btn-red" id="btn-elimina" type="button" hidden>Elimina</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPEDIZIONI -->
+    <section id="vista-spedizione" class="editor">
+      <div class="editor-testa">
+        <h2>Spedisci un ordine</h2>
+      </div>
+      <p style="margin-bottom:1.4rem;color:var(--gray);font-size:0.9rem;max-width:640px;">
+        Quando affidi un ordine al corriere, compila i dati qui sotto (li trovi nell'email dell'ordine):
+        il cliente ricever&agrave; automaticamente l'email &ldquo;il tuo ordine &egrave; in viaggio&rdquo; con il numero di tracciamento.
+        L'invio funziona quando il sito &egrave; online.
+      </p>
+      <div class="campi" style="max-width:640px;">
+        <div class="campo full">
+          <label for="s-email">Email del cliente *</label>
+          <input id="s-email" type="email" placeholder="cliente@esempio.it">
+        </div>
+        <div class="campo">
+          <label for="s-codice">Codice ordine</label>
+          <input id="s-codice" type="text" placeholder="MT-20260901-ABC">
+        </div>
+        <div class="campo">
+          <label for="s-corriere">Corriere</label>
+          <input id="s-corriere" type="text" placeholder="Es. BRT, SDA, GLS">
+        </div>
+        <div class="campo full">
+          <label for="s-tracking">Numero di tracciamento *</label>
+          <input id="s-tracking" type="text" placeholder="Es. 1234 5678 9012">
+        </div>
+        <div class="campo full">
+          <label for="s-link">Link diretto alla tracciatura (facoltativo)</label>
+          <input id="s-link" type="url" placeholder="https://...">
+        </div>
+      </div>
+      <div class="editor-azioni">
+        <button class="btn btn-gold" id="btn-invio-tracking" type="button">Invia email di spedizione</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- GALLERIA -->
+  <div id="modal-galleria" class="modal">
+    <div class="modal-box">
+      <h3>Scegli una foto dalla galleria store</h3>
+      <div class="galleria" id="galleria"></div>
+      <div style="margin-top:1.2rem;text-align:right;">
+        <button class="btn btn-ghost" id="btn-chiudi-galleria" type="button">Annulla</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const API = 'http://127.0.0.1:8090';
+
+    let prodotti = [];
+    let indiceModifica = null;
+    let fotoCorrente = '';
+
+    const $ = (id) => document.getElementById(id);
+    const grid = $('grid');
+    const vistaElenco = $('vista-elenco');
+    const vistaEditor = $('vista-editor');
+
+    const euro = (v) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(v || 0);
+    const escapeHtml = (t) => {
+      const d = document.createElement('div');
+      d.textContent = t ?? '';
+      return d.innerHTML;
+    };
+
+    let toastTimer;
+    function toast(msg) {
+      const el = $('toast');
+      el.textContent = msg;
+      el.classList.add('visibile');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('visibile'), 2200);
+    }
+
+    /* ---- caricamento ---- */
+    async function carica() {
+      try {
+        const r = await fetch(API + '/api/prodotti');
+        if (!r.ok) throw new Error();
+        prodotti = (await r.json()).prodotti || [];
+        $('errore-server').hidden = true;
+        renderGrid();
+      } catch {
+        $('errore-server').hidden = false;
+        grid.innerHTML = '';
+      }
+    }
+
+    async function salva() {
+      await fetch(API + '/api/prodotti', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prodotti })
+      });
+    }
+
+    /* ---- elenco ---- */
+    function renderGrid() {
+      if (!prodotti.length) {
+        grid.innerHTML = '<p class="vuoto">Nessun prodotto: usa il riquadro qui sopra per aggiungere il primo.</p>';
+        return;
+      }
+      grid.innerHTML = prodotti.map((p, i) => `
+        <article class="card" data-i="${i}">
+          <div class="card-media">
+            <img src="../${escapeHtml(p.immagine)}" alt="${escapeHtml(p.nome)}">
+            ${p.in_evidenza ? '<span class="tag">In evidenza</span>' : ''}
+            ${p.disponibile === false ? '<span class="tag esaurito">Non disponibile</span>' : ''}
+          </div>
+          <div class="card-body">
+            <h3>${escapeHtml(p.nome)}</h3>
+            <span class="prezzo">${euro(p.prezzo)}</span>
+            ${p.descrizione ? `<p class="desc">${escapeHtml(p.descrizione)}</p>` : ''}
+          </div>
+        </article>`).join('');
+    }
+
+    grid.addEventListener('click', (e) => {
+      const card = e.target.closest('.card');
+      if (card) apriEditor(Number(card.dataset.i));
+    });
+
+    /* ---- editor ---- */
+    function apriEditor(indice) {
+      indiceModifica = indice === undefined || isNaN(indice) ? null : indice;
+      const p = indiceModifica === null ? {} : prodotti[indiceModifica];
+
+      $('editor-titolo').textContent = indiceModifica === null ? 'Nuovo prodotto' : 'Modifica prodotto';
+      $('btn-elimina').hidden = indiceModifica === null;
+      $('f-nome').value = p.nome || '';
+      $('f-prezzo').value = p.prezzo ?? '';
+      $('f-spedizione').value = p.spedizione ?? '';
+      $('f-descrizione').value = p.descrizione || '';
+      $('f-evidenza').checked = !!p.in_evidenza;
+      $('f-disponibile').checked = p.disponibile !== false;
+      setFoto(p.immagine || '');
+
+      vistaElenco.style.display = 'none';
+      vistaEditor.classList.add('aperto');
+      window.scrollTo(0, 0);
+    }
+
+    function chiudiEditor() {
+      vistaEditor.classList.remove('aperto');
+      vistaElenco.style.display = '';
+    }
+
+    function setFoto(percorso) {
+      fotoCorrente = percorso || '';
+      $('foto-anteprima').innerHTML = fotoCorrente
+        ? `<img src="../${escapeHtml(fotoCorrente)}" alt="Anteprima prodotto">`
+        : 'Nessuna foto selezionata';
+    }
+
+    $('btn-nuovo').addEventListener('click', () => apriEditor(null));
+    $('btn-indietro').addEventListener('click', chiudiEditor);
+
+    $('btn-salva').addEventListener('click', async () => {
+      const nome = $('f-nome').value.trim();
+      const prezzo = parseFloat($('f-prezzo').value);
+      if (!nome) { toast('Inserisci il nome del prodotto'); return; }
+      if (isNaN(prezzo) || prezzo < 0) { toast('Inserisci un prezzo valido'); return; }
+      if (!fotoCorrente) { toast('Seleziona una foto per il prodotto'); return; }
+
+      const dati = {
+        nome,
+        prezzo,
+        spedizione: parseFloat($('f-spedizione').value) || 0,
+        descrizione: $('f-descrizione').value.trim(),
+        immagine: fotoCorrente,
+        in_evidenza: $('f-evidenza').checked,
+        disponibile: $('f-disponibile').checked
+      };
+
+      if (indiceModifica === null) prodotti.push(dati);
+      else prodotti[indiceModifica] = dati;
+
+      await salva();
+      renderGrid();
+      chiudiEditor();
+      toast('Prodotto salvato: aggiorna lo store per vederlo');
+    });
+
+    $('btn-elimina').addEventListener('click', async () => {
+      if (indiceModifica === null) return;
+      if (!confirm(`Eliminare "${prodotti[indiceModifica].nome}" dallo store?`)) return;
+      prodotti.splice(indiceModifica, 1);
+      await salva();
+      renderGrid();
+      chiudiEditor();
+      toast('Prodotto eliminato');
+    });
+
+    /* ---- foto: caricamento ---- */
+    $('btn-carica').addEventListener('click', () => $('input-file').click());
+    $('input-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      toast('Caricamento foto…');
+      const base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(',')[1]);
+        reader.readAsDataURL(file);
+      });
+      try {
+        const r = await fetch(API + '/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome: file.name, base64 })
+        });
+        const dati = await r.json();
+        if (!r.ok) throw new Error();
+        setFoto(dati.path);
+        toast('Foto caricata');
+      } catch {
+        toast('Errore nel caricamento della foto');
+      }
+      e.target.value = '';
+    });
+
+    /* ---- foto: galleria ---- */
+    $('btn-galleria').addEventListener('click', async () => {
+      try {
+        const r = await fetch(API + '/api/media');
+        const { files } = await r.json();
+        $('galleria').innerHTML = files.map(f => `
+          <button type="button" data-file="${escapeHtml(f)}">
+            <img src="../images-store/${encodeURIComponent(f)}" alt="${escapeHtml(f)}">
+          </button>`).join('') || '<p class="vuoto">Galleria vuota.</p>';
+        $('modal-galleria').classList.add('aperto');
+      } catch {
+        toast('Galleria non disponibile');
+      }
+    });
+    $('galleria').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-file]');
+      if (!btn) return;
+      setFoto('images-store/' + btn.dataset.file);
+      $('modal-galleria').classList.remove('aperto');
+    });
+    $('btn-chiudi-galleria').addEventListener('click', () => $('modal-galleria').classList.remove('aperto'));
+
+    /* ---- navigazione sezioni ---- */
+    const vistaSpedizione = $('vista-spedizione');
+
+    function attivaTab(quale) {
+      $('nav-prodotti').classList.toggle('attiva', quale === 'prodotti');
+      $('nav-spedizioni').classList.toggle('attiva', quale === 'spedizioni');
+    }
+
+    $('nav-prodotti').addEventListener('click', () => {
+      vistaSpedizione.classList.remove('aperto');
+      vistaEditor.classList.remove('aperto');
+      vistaElenco.style.display = '';
+      attivaTab('prodotti');
+    });
+
+    $('nav-spedizioni').addEventListener('click', () => {
+      vistaElenco.style.display = 'none';
+      vistaEditor.classList.remove('aperto');
+      vistaSpedizione.classList.add('aperto');
+      attivaTab('spedizioni');
+    });
+
+    /* ---- invio email spedizione ---- */
+    $('btn-invio-tracking').addEventListener('click', async () => {
+      const email = $('s-email').value.trim();
+      const tracking = $('s-tracking').value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Inserisci l\'email del cliente'); return; }
+      if (!tracking) { toast('Inserisci il numero di tracciamento'); return; }
+
+      const btn = $('btn-invio-tracking');
+      btn.disabled = true;
+      btn.textContent = 'Invio in corso…';
+      try {
+        const r = await fetch('/api/tracking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            codice: $('s-codice').value.trim(),
+            corriere: $('s-corriere').value.trim(),
+            tracking,
+            link: $('s-link').value.trim()
+          })
+        });
+        const dati = await r.json();
+        if (!r.ok) throw new Error(dati.error || '');
+        toast('Email di spedizione inviata');
+        ['s-email', 's-codice', 's-corriere', 's-tracking', 's-link'].forEach(id => { $(id).value = ''; });
+      } catch {
+        toast('Invio non riuscito: disponibile quando il sito è online');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Invia email di spedizione';
+    });
+
+    carica();
+  </script>
 </body>
 </html>

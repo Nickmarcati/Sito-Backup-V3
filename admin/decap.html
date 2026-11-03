@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/png" href="../images/Marcati Teloni favicon.png">
+  <title>Amministrazione — Marcati Teloni</title>
+  <style>
+    .mt-guida-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 99999;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.4rem;
+      border: none;
+      border-radius: 100px;
+      background: linear-gradient(135deg, #c9a84c, #a88a3a);
+      color: #0f1115;
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .mt-guida-btn:hover { filter: brightness(1.1); }
+    .mt-guida-panel {
+      position: fixed;
+      bottom: 5rem;
+      right: 1.5rem;
+      z-index: 99999;
+      width: min(360px, calc(100vw - 3rem));
+      max-height: 70vh;
+      overflow-y: auto;
+      background: #181b21;
+      border: 1px solid #2a2f38;
+      border-radius: 12px;
+      padding: 1.5rem;
+      color: #a8aebc;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+      display: none;
+    }
+    .mt-guida-panel.aperto { display: block; }
+    .mt-guida-panel h2 {
+      margin: 0 0 0.75rem;
+      color: #f0f2f5;
+      font-size: 1.05rem;
+    }
+    .mt-guida-panel h3 {
+      margin: 1rem 0 0.35rem;
+      color: #c9a84c;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .mt-guida-panel ol, .mt-guida-panel ul { margin: 0; padding-left: 1.2rem; }
+    .mt-guida-panel li { margin-bottom: 0.35rem; }
+    .mt-guida-panel strong { color: #f0f2f5; }
+    .mt-guida-panel .nota {
+      margin-top: 1rem;
+      padding: 0.7rem 0.9rem;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 8px;
+      font-size: 0.8rem;
+    }
+    .mt-add-big {
+      display: block;
+      width: 100%;
+      margin-top: 1rem;
+      padding: 2.25rem 1rem !important;
+      border: 2px dashed #c9a84c !important;
+      border-radius: 14px;
+      background: rgba(201,168,76,0.06) !important;
+      color: #a88a3a !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      text-align: center;
+      cursor: pointer;
+    }
+    .mt-add-big::before {
+      content: '+';
+      display: block;
+      margin-bottom: 0.3rem;
+      font-size: 2.6rem;
+      line-height: 1;
+      color: #c9a84c;
+    }
+    .mt-add-big:hover {
+      background: rgba(201,168,76,0.12) !important;
+    }
+  </style>
+</head>
+<body>
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+  <button id="mt-guida-btn" class="mt-guida-btn" type="button">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+    Guida
+  </button>
+
+  <div id="mt-guida-panel" class="mt-guida-panel" role="dialog" aria-label="Guida al pannello admin">
+    <h2>Come usare il pannello</h2>
+
+    <h3>Aggiungere un prodotto</h3>
+    <ol>
+      <li>Nella colonna a sinistra clicca <strong>Prodotti Store</strong></li>
+      <li>Apri <strong>Lista Prodotti</strong></li>
+      <li>Clicca <strong>Add prodotti</strong> (in basso) per aggiungere una riga</li>
+      <li>Compila nome, prezzo, spedizione, descrizione e scegli la foto</li>
+      <li>Clicca <strong>Save</strong> in alto a destra</li>
+    </ol>
+
+    <h3>Modificare prezzo o foto</h3>
+    <ol>
+      <li>Apri <strong>Lista Prodotti</strong> e clicca sul prodotto</li>
+      <li>Cambia i valori o sostituisci l'immagine</li>
+      <li>Clicca <strong>Save</strong></li>
+    </ol>
+
+    <h3>Togliere / rimettere un prodotto</h3>
+    <ul>
+      <li><strong>Disponibile</strong>: se lo togli, nello store appare "Non disponibile"</li>
+      <li><strong>In evidenza</strong>: lo mette in cima allo store col badge dorato</li>
+    </ul>
+
+    <h3>Caricare una foto nuova</h3>
+    <ul>
+      <li>Nel campo immagine clicca <strong>Choose different image</strong>: si apre la libreria con le foto della cartella <strong>images</strong></li>
+    </ul>
+
+    <div class="nota">Sei in <strong>modalità locale</strong>: ogni Save aggiorna subito i file sul tuo PC e lo store li mostra al prossimo aggiornamento della pagina.</div>
+  </div>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('mt-guida-btn');
+      const panel = document.getElementById('mt-guida-panel');
+      btn.addEventListener('click', () => panel.classList.toggle('aperto'));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') panel.classList.remove('aperto');
+      });
+
+      const rendiAddGrande = () => {
+        document.querySelectorAll('button').forEach(b => {
+          const testo = (b.textContent || '').trim();
+          if (/^add\b/i.test(testo) && !b.classList.contains('mt-add-big')) {
+            b.classList.add('mt-add-big');
+          }
+        });
+      };
+      new MutationObserver(rendiAddGrande).observe(document.body, { childList: true, subtree: true });
+      rendiAddGrande();
+    })();
+  </script>
+</body>
+</html>

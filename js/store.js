@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return div.innerHTML;
   };
 
+  let catalogo = [];
+
   const renderizza = (prodotti) => {
     if (status) status.style.display = 'none';
 
@@ -28,13 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    catalogo = prodotti;
     const ordinati = [...prodotti].sort((a, b) => (b.in_evidenza ? 1 : 0) - (a.in_evidenza ? 1 : 0));
 
     grid.innerHTML = ordinati.map(p => {
       const badge = p.in_evidenza ? '<span class="store-badge">In evidenza</span>' : '';
       const esaurito = p.disponibile === false;
       return `
-        <article class="store-card${esaurito ? ' store-card-esaurito' : ''}">
+        <article class="store-card${esaurito ? ' store-card-esaurito' : ''}" data-nome="${escapeHtml(p.nome)}">
           <div class="store-card-media">
             <img src="${escapeHtml(p.immagine)}" alt="${escapeHtml(p.nome)}" loading="lazy">
             ${badge}
@@ -43,15 +46,27 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3>${escapeHtml(p.nome)}</h3>
             ${p.descrizione ? `<p>${escapeHtml(p.descrizione)}</p>` : ''}
             <div class="store-card-footer">
-              <span class="store-prezzo">${formatPrezzo(p.prezzo)}</span>
-              <a href="index.html#preventivo" class="btn ${esaurito ? 'btn-outline' : 'btn-primary'}">
-                ${esaurito ? 'Non disponibile' : 'Richiedi info'}
-              </a>
+              <div>
+                <span class="store-prezzo">${formatPrezzo(p.prezzo)}</span>
+                <div class="store-spedizione">${p.spedizione > 0 ? `Spedizione ${formatPrezzo(p.spedizione)}` : 'Spedizione gratuita'}</div>
+              </div>
+              <button type="button" class="btn ${esaurito ? 'btn-outline' : 'btn-primary'} store-add" ${esaurito ? 'disabled' : ''}>
+                ${esaurito ? 'Non disponibile' : 'Aggiungi al carrello'}
+              </button>
             </div>
+            <a href="index.html#preventivo" class="store-info-link">Misure personalizzate? Richiedi un preventivo</a>
           </div>
         </article>`;
     }).join('');
   };
+
+  grid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.store-add');
+    if (!btn || btn.disabled) return;
+    const nome = btn.closest('.store-card').dataset.nome;
+    const prodotto = catalogo.find(p => p.nome === nome);
+    if (prodotto && window.MTCart) window.MTCart.aggiungi(prodotto);
+  });
 
   fetch('data/prodotti.json')
     .then(r => {

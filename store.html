@@ -24,9 +24,15 @@
         <li><a href="colori.html">Colori</a></li>
         <li><a href="index.html#preventivo" class="btn btn-primary">Preventivo</a></li>
       </ul>
-      <button class="nav-toggle" aria-label="Apri menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="nav-actions">
+        <button id="cart-btn" class="nav-cart" aria-label="Apri carrello">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <span id="cart-count" class="nav-cart-count">0</span>
+        </button>
+        <button class="nav-toggle" aria-label="Apri menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
     <nav class="nav-mobile" aria-label="Navigazione mobile">
       <a href="index.html">Home</a>
@@ -59,7 +65,7 @@
       <div class="section-header">
         <span class="section-label">I Nostri Prodotti</span>
         <h2>Catalogo con prezzi indicativi</h2>
-        <p>I prezzi indicati sono orientativi e riferiti a misure standard. Contattaci per un preventivo preciso sulle tue misure.</p>
+        <p>I prezzi indicati sono orientativi, IVA inclusa, e riferiti a misure standard. Contattaci per un preventivo preciso sulle tue misure.</p>
       </div>
 
       <div id="store-status" class="store-status" role="status">Caricamento prodotti…</div>
@@ -116,13 +122,113 @@
         <div style="display:flex;gap:1.5rem;">
           <a href="privacy.html">Privacy Policy</a>
           <a href="privacy.html#cookie">Cookie Policy</a>
+          <a href="spedizioni-resi.html">Spedizioni e Resi</a>
         </div>
       </div>
     </div>
   </footer>
 
+  <!-- CARRELLO -->
+  <div id="cart-overlay" class="cart-overlay"></div>
+  <aside id="cart-drawer" class="cart-drawer" aria-label="Carrello">
+    <div class="cart-drawer-header">
+      <h3>Il tuo carrello</h3>
+      <button id="cart-close" class="cart-close" aria-label="Chiudi carrello">&times;</button>
+    </div>
+    <div id="cart-items" class="cart-items"></div>
+    <div class="cart-drawer-footer">
+      <div class="cart-total" style="font-weight:600;color:var(--gray-light);"><span>Subtotale</span><strong id="cart-subtotal" style="color:var(--gray-light);">&euro; 0,00</strong></div>
+      <div class="cart-total" style="font-weight:600;color:var(--gray-light);"><span>Spedizione</span><strong id="cart-shipping" style="color:var(--gray-light);">&mdash;</strong></div>
+      <div class="cart-total"><span>Totale indicativo</span><strong id="cart-total">&euro; 0,00</strong></div>
+      <div class="cart-total" style="font-weight:600;color:var(--gray);font-size:0.82rem;"><span>di cui IVA (22%) inclusa</span><strong id="cart-iva" style="color:var(--gray);">&euro; 0,00</strong></div>
+      <p class="cart-note">I prezzi sono indicativi: ogni articolo &egrave; realizzato su misura. L'importo finale sar&agrave; confermato dal preventivo.</p>
+      <button id="cart-checkout-btn" class="btn btn-primary" style="justify-content:center;">Procedi con l'ordine &#8594;</button>
+    </div>
+  </aside>
+
+  <!-- CHECKOUT -->
+  <div id="checkout-modal" class="cart-modal" role="dialog" aria-modal="true" aria-label="Completa ordine">
+    <div class="cart-modal-box">
+      <div id="checkout-form-view">
+        <h3>Completa l'ordine</h3>
+        <p class="cart-modal-sub">Versione di prova: nessun pagamento reale verr&agrave; addebitato. Il pagamento online sar&agrave; attivo al lancio del servizio. Con l'ordine accetti la <a href="spedizioni-resi.html" target="_blank" style="color:var(--gold);text-decoration:underline;">politica Spedizioni e Resi</a>.</p>
+        <div id="checkout-summary" class="cart-summary"></div>
+        <form id="checkout-form" novalidate>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="co-nome">Nome <span style="color:var(--gold)">*</span></label>
+              <input type="text" id="co-nome" name="nome" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label for="co-cognome">Cognome <span style="color:var(--gold)">*</span></label>
+              <input type="text" id="co-cognome" name="cognome" required autocomplete="family-name">
+            </div>
+            <div class="form-group">
+              <label for="co-email">Email <span style="color:var(--gold)">*</span></label>
+              <input type="email" id="co-email" name="email" required autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="co-telefono">Telefono <span style="color:var(--gold)">*</span></label>
+              <input type="tel" id="co-telefono" name="telefono" required autocomplete="tel">
+            </div>
+            <div class="form-group full">
+              <label for="co-indirizzo">Indirizzo di consegna <span style="color:var(--gold)">*</span></label>
+              <input type="text" id="co-indirizzo" name="indirizzo" required autocomplete="street-address" placeholder="Via e numero civico">
+            </div>
+            <div class="form-group">
+              <label for="co-cap">CAP <span style="color:var(--gold)">*</span></label>
+              <input type="text" id="co-cap" name="cap" required inputmode="numeric" pattern="[0-9]{5}" title="CAP di 5 cifre" autocomplete="postal-code" placeholder="36025">
+            </div>
+            <div class="form-group">
+              <label for="co-citta">Citt&agrave; <span style="color:var(--gold)">*</span></label>
+              <input type="text" id="co-citta" name="citta" required autocomplete="address-level2" placeholder="Noventa Vicentina">
+            </div>
+            <div class="form-group">
+              <label for="co-provincia">Provincia <span style="color:var(--gold)">*</span></label>
+              <input type="text" id="co-provincia" name="provincia" required maxlength="2" title="Sigla di 2 lettere (es. VI)" placeholder="VI" style="text-transform:uppercase;">
+            </div>
+            <div class="form-group">
+              <label for="co-nazione">Nazione <span style="color:var(--gold)">*</span></label>
+              <select id="co-nazione" name="nazione" required autocomplete="country-name">
+                <option value="IT" selected>Italia</option>
+                <option value="SM">San Marino</option>
+                <option value="CH">Svizzera</option>
+                <option value="AT">Austria</option>
+                <option value="SI">Slovenia</option>
+                <option value="FR">Francia</option>
+                <option value="DE">Germania</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="co-note">Note (misure, colori, quantit&agrave;)</label>
+              <textarea id="co-note" name="note" style="min-height:80px;"></textarea>
+            </div>
+            <div class="form-group full" style="flex-direction:row;align-items:flex-start;gap:0.75rem;">
+              <input type="checkbox" id="co-privacy" name="privacy" value="1" required style="margin-top:0.3rem;accent-color:var(--gold);width:16px;height:16px;flex-shrink:0;">
+              <label for="co-privacy" style="font-weight:400;font-size:0.85rem;cursor:pointer;">
+                Ho letto e accetto la <a href="privacy.html" style="color:var(--gold);text-decoration:underline;" target="_blank">Privacy Policy</a>. <span style="color:var(--gold)">*</span>
+              </label>
+            </div>
+          </div>
+          <button type="submit" id="checkout-submit" class="btn btn-primary" style="margin-top:1.25rem;width:100%;justify-content:center;">Conferma ordine</button>
+          <button type="button" id="checkout-cancel" class="btn btn-outline" style="margin-top:0.6rem;width:100%;justify-content:center;">Annulla</button>
+        </form>
+      </div>
+      <div id="checkout-success-view" class="cart-success" hidden>
+        <h3>Ordine registrato!</h3>
+        <p>Grazie! Il codice del tuo ordine &egrave;</p>
+        <span class="code" id="order-code"></span>
+        <p style="margin-bottom:1.5rem;">Ti contatteremo al pi&ugrave; presto per confermare misure e preventivo definitivo.</p>
+        <button id="checkout-done" class="btn btn-primary">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cart-toast" class="cart-toast"></div>
+
   <button id="back-to-top" aria-label="Torna in cima">&#8593;</button>
   <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
   <script src="js/store.js"></script>
 </body>
 </html>

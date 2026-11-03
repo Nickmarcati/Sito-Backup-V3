@@ -7,8 +7,8 @@ backend:
 
 local_backend: true
 
-media_folder: "images"
-public_folder: "images"
+media_folder: "images-store"
+public_folder: "images-store"
 
 collections:
   - name: "prodotti"
@@ -27,6 +27,7 @@ collections:
             fields:
               - { name: "nome", label: "Nome prodotto", widget: "string" }
               - { name: "prezzo", label: "Prezzo (€)", widget: "number", value_type: "float", step: 0.01, min: 0 }
+              - { name: "spedizione", label: "Spedizione nazionale (€)", widget: "number", value_type: "float", step: 0.01, min: 0, required: false }
               - { name: "immagine", label: "Immagine", widget: "image" }
               - { name: "descrizione", label: "Descrizione", widget: "text", required: false }
               - { name: "in_evidenza", label: "In evidenza", widget: "boolean", default: false, required: false }
